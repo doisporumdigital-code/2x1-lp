@@ -23,7 +23,8 @@
 <script>
   window.CONFIG_2X1 = {
     GTM_ID: "",                                // GTM-XXXXXXX · preenchido, o GTM assume as tags e o pixel de reserva desliga
-    PIXEL_ID: "1523177952455734",             // ID do pixel da Meta · usado só no modo sem GTM
+    PIXEL_ID: "1523177952455734",          // ID do pixel da Meta · usado só no modo sem GTM
+    CAPTURA_URL: "https://mdywlvrhubldacdtqekh.supabase.co/functions/v1/captura",  // banco de dados da 2X1 (Supabase) · recebe navegação e leads
     SHEET_ENDPOINT: "https://script.google.com/macros/s/AKfycbwcS-evX82AZras8iRRsJtAieKPAkwum_hjhK4I25D2QezzNZ-t52hCYXi9qdvnGart/exec",  // URL do app da web do Apps Script
     PRIVACY_URL: "privacidade.html",                           // link da política de privacidade (LGPD)
     WHATSAPP: "",                              // opcional · só números, ex 5519999999999 (abre o whats no fim)
@@ -504,6 +505,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
         <input type="hidden" name="fbp" id="fbp">
         <input type="hidden" name="fbc" id="fbc">
         <input type="hidden" name="user_agent" id="user_agent">
+        <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Site<input type="text" name="website" id="website" tabindex="-1" autocomplete="off"></label></div>
 
         <p class="formnote">Prefere o direct? Manda a palavra RESULTADO pra @doisxum.assessoria</p>
         <p class="formnote" id="lgpd" style="margin-top:8px">Ao enviar, você autoriza a 2X1 a usar esses dados pra falar com você sobre a sua análise, de acordo com a <a id="privacyLink" href="#" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
@@ -564,6 +566,35 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
     var el = document.getElementById(k); if(el) el.value = v || ls("2x1_"+k);
   });
   var pu = document.getElementById("page_url"); if(pu) pu.value = window.location.href;
+  // IDs dinâmicos da Meta ({{campaign.id}}, {{adset.id}}, {{ad.id}}, {{placement}}) quando vierem na URL
+  ["campaign_id","adset_id","ad_id","placement"].forEach(function(k){ var v = params.get(k); if(v) ls("2x1_"+k, v); });
+
+  /* ---- banco de dados da 2X1 · jornada do visitante até o lead ---- */
+  var VID = ls("2x1_vid"); if(!VID){ VID = novoId("v"); ls("2x1_vid", VID); }
+  var SID = ""; try{ SID = sessionStorage.getItem("2x1_sid") || ""; if(!SID){ SID = novoId("s"); sessionStorage.setItem("2x1_sid", SID); } }catch(e){ SID = novoId("s"); }
+  function contexto(){
+    var c = {visitor_id: VID, session_id: SID, page_url: location.href, referrer: document.referrer || "",
+             fbp: getCookie("_fbp"), fbc: lerFbc(), user_agent: navigator.userAgent};
+    ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid","campaign_id","adset_id","ad_id","placement"].forEach(function(k){
+      c[k] = params.get(k) || ls("2x1_"+k);
+    });
+    return c;
+  }
+  function registrar(evento, dados){
+    if(!CFG.CAPTURA_URL) return;
+    try{
+      var corpo = JSON.stringify(Object.assign(contexto(), {tipo: "evento", evento: evento, dados: dados || {}}));
+      if(navigator.sendBeacon && navigator.sendBeacon(CFG.CAPTURA_URL, new Blob([corpo], {type: "text/plain"}))) return;
+      fetch(CFG.CAPTURA_URL, {method: "POST", headers: {"Content-Type": "text/plain"}, body: corpo, keepalive: true}).catch(function(){});
+    }catch(e){}
+  }
+  setTimeout(function(){ registrar("page_view"); }, 1200);
+  var rolou = false;
+  window.addEventListener("scroll", function(){
+    if(rolou) return;
+    var h = document.documentElement;
+    if((h.scrollTop + innerHeight) / h.scrollHeight >= .5){ rolou = true; registrar("scroll_50"); }
+  }, {passive: true});
 
   // fbc no formato da Meta · cookie _fbc, ou montado a partir do fbclid guardado
   function lerFbc(){
@@ -634,13 +665,15 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
     }
   }
   document.getElementById("toStep2").addEventListener("click", function(){
-    if(validateStep(1)){ go(2); track('form_step2', {}, 'FormStep2', {}, {}, true); }
+    if(validateStep(1)){ go(2); track('form_step2', {}, 'FormStep2', {}, {}, true); registrar("form_step2"); }
   });
   document.getElementById("backStep1").addEventListener("click", function(){ go(1); });
 
   /* ---- envio ---- */
   var form = document.getElementById("leadForm");
   var btn = document.getElementById("submitBtn");
+  var comecou = false;
+  form.addEventListener("focusin", function(){ if(!comecou){ comecou = true; registrar("form_start"); } });
   form.addEventListener("submit", function(ev){
     ev.preventDefault();
     if(!validateStep(2)) return;
@@ -678,9 +711,20 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
       document.getElementById("okPanel").style.display="block";
       document.getElementById("aplicar").scrollIntoView({behavior:"smooth"});
     }
-    if(CFG.SHEET_ENDPOINT && CFG.SHEET_ENDPOINT !== "SUA_URL_DO_APPS_SCRIPT"){
-      fetch(CFG.SHEET_ENDPOINT, {method:"POST", mode:"no-cors", body:data}).then(done).catch(done);
-    } else { done(); }
+    // reserva · se o banco não responder, o lead vai direto para a planilha
+    function reserva(){
+      if(CFG.SHEET_ENDPOINT && CFG.SHEET_ENDPOINT !== "SUA_URL_DO_APPS_SCRIPT"){
+        fetch(CFG.SHEET_ENDPOINT, {method:"POST", mode:"no-cors", body:data}).then(done).catch(done);
+      } else { done(); }
+    }
+    if(CFG.CAPTURA_URL){
+      var lead = contexto();
+      new FormData(form).forEach(function(v, k){ lead[k] = v; });
+      lead.tipo = "lead"; lead.fbp = document.getElementById("fbp").value; lead.fbc = document.getElementById("fbc").value;
+      fetch(CFG.CAPTURA_URL, {method: "POST", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(lead), keepalive: true})
+        .then(function(r){ if(r.status >= 500) reserva(); else done(); })
+        .catch(reserva);
+    } else { reserva(); }
   });
 
   /* ---- faq accordion ---- */
@@ -706,7 +750,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
 
   /* ---- cliques de cta ---- */
   document.querySelectorAll('[data-cta]').forEach(function(a){
-    a.addEventListener('click', function(){ var l = a.getAttribute('data-cta'); track('click_cta', {cta_local: l}, 'ClickCTA', {local: l}, {}, true); });
+    a.addEventListener('click', function(){ var l = a.getAttribute('data-cta'); track('click_cta', {cta_local: l}, 'ClickCTA', {local: l}, {}, true); registrar("click_cta", {local: l}); });
   });
 
   /* ---- link da política de privacidade ---- */
