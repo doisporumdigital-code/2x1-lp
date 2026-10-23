@@ -279,6 +279,15 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
 #formulario{scroll-margin-top:84px}
 .top .btn{white-space:nowrap}
 @media(max-width:520px){
+  /* botão principal centralizado e numa linha só */
+  .hero .cta-row{flex-direction:column;align-items:stretch;gap:14px;text-align:center}
+  .hero .cta-row .btn,.mbar .btn{white-space:nowrap;text-align:center;font-size:clamp(.8rem,3.85vw,1rem);padding:16px 10px;letter-spacing:-.02em}
+  .hero .cta-row .note{text-align:center;font-size:.7rem;letter-spacing:.01em;white-space:nowrap}
+  /* passos depois do formulário centralizados */
+  .depois .after{justify-items:center}
+  .depois .after .a{flex-direction:column;align-items:center;text-align:center;gap:8px}
+}
+@media(max-width:520px){
   .top .wrap{padding-top:11px;padding-bottom:11px;gap:10px}
   .logo-ic{height:30px}
   .logo-tx b{font-size:1rem}
@@ -432,7 +441,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
     <div class="lead reveal">
       <div class="eyebrow"><span class="dot"></span><span class="kick">Fale com a 2X1</span></div>
       <h2>Quer entender melhor os resultados do seu marketing?</h2>
-      <p>Preenche abaixo. A gente analisa o seu cenário e te mostra pra onde o seu investimento está indo de verdade.</p>
+      <p>Preencha abaixo. A gente analisa o seu cenário e te mostra pra onde o seu investimento está indo de verdade.</p>
     </div>
 
     <div class="formcard reveal" id="formulario">
