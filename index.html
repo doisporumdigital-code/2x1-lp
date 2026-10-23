@@ -260,6 +260,35 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
   .reveal{opacity:1;transform:none}
 }
 #aplicar,#metodo,#pra-quem,#faq{scroll-margin-top:84px}
+
+/* depois do formulário · blocos isolados */
+.depois{max-width:760px;margin:56px auto 0;padding-top:40px;border-top:1px solid var(--line2)}
+.depois-t{margin-bottom:22px;display:block}
+.depois .after .a{text-align:left}
+.direct{max-width:600px;margin:28px auto 0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.direct p{color:var(--gray2);font-size:.98rem}
+.direct p b{color:#fff}
+.ig{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;color:#fff;text-decoration:none;padding:12px 20px;border-radius:12px;border:1px solid rgba(147,168,255,.28);background:rgba(42,91,255,.12)}
+.ig svg{width:20px;height:20px;stroke:var(--blue3);fill:none;stroke-width:1.8}
+.ig:hover{background:rgba(42,91,255,.22)}
+.ig-foot{color:var(--blue3);text-decoration:none}
+.ig-foot:hover{text-decoration:underline}
+#formulario{scroll-margin-top:84px}
+.top .btn{white-space:nowrap}
+@media(max-width:520px){
+  .top .wrap{padding-top:11px;padding-bottom:11px;gap:10px}
+  .logo-ic{height:30px}
+  .logo-tx b{font-size:1rem}
+  .logo-tx small{font-size:.5rem;letter-spacing:.2em}
+  .top .btn{padding:10px 14px;font-size:.84rem}
+  .kick{letter-spacing:.18em}
+  .eyebrow{padding:6px 12px 6px 10px}
+  .formsec{padding:64px 0 88px}
+  .formcard{margin-top:28px}
+  .depois{margin-top:40px;padding-top:30px}
+  .direct{padding:20px 18px}
+  #formulario{scroll-margin-top:72px}
+}
 </style>
 </head>
 <body>
@@ -270,7 +299,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
       <img class="logo-ic" src="logo-2x1.png" alt="DOISXUM">
       <span class="logo-tx"><b>DOISXUM</b><small>Growth Marketing</small></span>
     </a>
-    <a href="#aplicar" class="btn" data-cta="topo">Fale com a gente</a>
+    <a href="#formulario" class="btn" data-cta="topo">Fale com a gente</a>
   </div>
 </header>
 
@@ -281,7 +310,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
     <h1 class="reveal">Seus anúncios geram vendas?<br><span class="grad">Ou só cliques?</span></h1>
     <p class="sub reveal">Você investe em anúncios, mas sabe quais campanhas realmente geram vendas? Na 2X1, conectamos seus anúncios aos resultados comerciais para você investir com mais inteligência.</p>
     <div class="cta-row reveal">
-      <a href="#aplicar" class="btn" data-cta="hero">Quero descobrir onde posso vender mais</a>
+      <a href="#formulario" class="btn" data-cta="hero">Quero descobrir onde posso vender mais</a>
       <span class="note">Análise de cenário · atendimento próximo</span>
     </div>
   </div>
@@ -403,13 +432,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
       <p>Preenche abaixo. A gente analisa o seu cenário e te mostra pra onde o seu investimento está indo de verdade.</p>
     </div>
 
-    <div class="after reveal" style="margin-top:38px">
-      <div class="a"><div class="d">1</div><div><h4>Você preenche</h4><p>Leva menos de um minuto</p></div></div>
-      <div class="a"><div class="d">2</div><div><h4>A 2X1 analisa</h4><p>A gente olha o seu cenário</p></div></div>
-      <div class="a"><div class="d">3</div><div><h4>Diagnóstico</h4><p>Você recebe os próximos passos</p></div></div>
-    </div>
-
-    <div class="formcard reveal">
+    <div class="formcard reveal" id="formulario">
       <form id="leadForm" novalidate>
         <div class="progress">
           <div class="bars"><span class="on" id="b1"></span><span id="b2"></span></div>
@@ -442,7 +465,8 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
         <div class="fstep" data-step="2">
           <div class="field">
             <label for="empresa">Empresa ou @ do Instagram</label>
-            <input id="empresa" name="empresa" type="text">
+            <input id="empresa" name="empresa" type="text" placeholder="Nome da empresa ou @perfil" required>
+            <div class="msg">Coloca o nome da empresa ou o @</div>
           </div>
           <div class="field">
             <label for="segmento">Segmento</label>
@@ -484,12 +508,14 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
           </div>
           <div class="field">
             <label for="desafio">Qual o seu principal desafio hoje</label>
-            <textarea id="desafio" name="desafio" placeholder="Conta em uma ou duas linhas"></textarea>
+            <textarea id="desafio" name="desafio" placeholder="Conta em uma ou duas linhas" required></textarea>
+            <div class="msg">Conta rapidinho o seu principal desafio</div>
           </div>
           <div class="fnav">
             <button type="button" class="btn ghost" id="backStep1" style="flex:0 0 38%">Voltar</button>
             <button type="submit" class="btn" id="submitBtn">Quero analisar meus resultados</button>
           </div>
+          <p class="formnote" id="lgpd">Ao enviar, você autoriza a 2X1 a usar esses dados pra falar com você sobre a sua análise, de acordo com a <a id="privacyLink" href="#" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
         </div>
 
         <!-- ocultos de rastreamento -->
@@ -507,8 +533,6 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
         <input type="hidden" name="user_agent" id="user_agent">
         <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Site<input type="text" name="website" id="website" tabindex="-1" autocomplete="off"></label></div>
 
-        <p class="formnote">Prefere o direct? Manda a palavra RESULTADO pra @doisxum.assessoria</p>
-        <p class="formnote" id="lgpd" style="margin-top:8px">Ao enviar, você autoriza a 2X1 a usar esses dados pra falar com você sobre a sua análise, de acordo com a <a id="privacyLink" href="#" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
       </form>
 
       <div class="ok" id="okPanel" aria-live="polite">
@@ -517,6 +541,20 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
         <p>A 2X1 vai analisar e te chamar pra te mostrar onde está o seu resultado. Se quiser adiantar, fala com a gente agora.</p>
         <a class="btn" id="okCta" href="#" target="_blank" rel="noopener">Falar agora no direct</a>
       </div>
+    </div>
+
+    <div class="depois reveal">
+      <div class="kick depois-t">O que acontece depois</div>
+      <div class="after">
+        <div class="a"><div class="d">1</div><div><h4>Você preenche</h4><p>Leva menos de um minuto</p></div></div>
+        <div class="a"><div class="d">2</div><div><h4>A 2X1 analisa</h4><p>A gente olha o seu cenário</p></div></div>
+        <div class="a"><div class="d">3</div><div><h4>Diagnóstico</h4><p>Você recebe os próximos passos</p></div></div>
+      </div>
+    </div>
+
+    <div class="direct reveal">
+      <p>Prefere conversar pelo direct? Manda a palavra <b>RESULTADO</b> pra gente.</p>
+      <a class="ig" href="https://instagram.com/doisxum.assessoria" target="_blank" rel="noopener" data-cta="direct"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>@doisxum.assessoria</a>
     </div>
   </div>
 </section>
@@ -527,11 +565,11 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
       <img class="logo-ic" src="logo-2x1.png" alt="DOISXUM">
       <span class="logo-tx"><b>DOISXUM</b><small>Growth Marketing</small></span>
     </a>
-    <div class="c">@doisxum.assessoria · Multiplicando resultados</div>
+    <div class="c"><a class="ig-foot" href="https://instagram.com/doisxum.assessoria" target="_blank" rel="noopener">@doisxum.assessoria</a> · Multiplicando resultados</div>
   </div>
 </footer>
 
-<div class="mbar" id="mbar"><a href="#aplicar" class="btn" data-cta="sticky">Quero descobrir onde posso vender mais</a></div>
+<div class="mbar" id="mbar"><a href="#formulario" class="btn" data-cta="sticky">Quero descobrir onde posso vender mais</a></div>
 
 <script>
 (function(){
@@ -709,7 +747,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
       else { cta.href = CFG.INSTAGRAM || "#"; cta.textContent="Falar agora no direct"; }
       form.style.display="none";
       document.getElementById("okPanel").style.display="block";
-      document.getElementById("aplicar").scrollIntoView({behavior:"smooth"});
+      document.getElementById("formulario").scrollIntoView({behavior:"smooth", block:"start"});
     }
     // reserva · se o banco não responder, o lead vai direto para a planilha
     function reserva(){
