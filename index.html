@@ -276,7 +276,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
 .ig:hover{background:rgba(42,91,255,.22)}
 .ig-foot{color:var(--blue3);text-decoration:none}
 .ig-foot:hover{text-decoration:underline}
-#formulario{scroll-margin-top:84px}
+#formulario{scroll-margin-top:96px}
 .top .btn{white-space:nowrap}
 @media(max-width:520px){
   /* botão principal centralizado e numa linha só */
@@ -299,7 +299,11 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
   .formcard{margin-top:28px}
   .depois{margin-top:40px;padding-top:30px}
   .direct{padding:20px 18px}
-  #formulario{scroll-margin-top:72px}
+  #formulario{scroll-margin-top:90px}
+  .formsec .lead h2{font-size:1.6rem;line-height:1.15}
+  .formsec .lead p{margin-top:12px;font-size:.98rem}
+  .formsec .eyebrow{margin-bottom:14px}
+  .formcard{margin-top:22px}
 }
 </style>
 </head>
@@ -438,13 +442,13 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
 <section class="formsec center" id="aplicar">
   <div class="glow"></div>
   <div class="wrap">
-    <div class="lead reveal">
+    <div class="lead" id="formulario">
       <div class="eyebrow"><span class="dot"></span><span class="kick">Fale com a 2X1</span></div>
       <h2>Quer entender melhor os resultados do seu marketing?</h2>
       <p>Preencha abaixo. A gente analisa o seu cenário e te mostra pra onde o seu investimento está indo de verdade.</p>
     </div>
 
-    <div class="formcard reveal" id="formulario">
+    <div class="formcard">
       <form id="leadForm" novalidate>
         <div class="progress">
           <div class="bars"><span class="on" id="b1"></span><span id="b2"></span></div>
@@ -554,7 +558,7 @@ footer .c{font-family:var(--mono);font-size:.78rem;color:var(--gray);letter-spac
       </div>
     </div>
 
-    <div class="depois reveal">
+    <div class="depois">
       <div class="kick depois-t">O que acontece depois</div>
       <div class="after">
         <div class="a"><div class="d">1</div><div><h4>Você preenche</h4><p>Leva menos de um minuto</p></div></div>
