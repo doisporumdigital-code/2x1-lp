@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CRM 2X1</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0E17">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#0B0E17;--panel:#111624;--panel2:#161C2D;--panel3:#1C2338;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);
+  --tx:#E8ECF5;--tx2:#C9CFDD;--mut:#8089A0;--blue:#2A5BFF;--blue2:#5D7CFF;--blue3:#9DB2FF;
+  --ok:#2BC48A;--okbg:rgba(43,196,138,.12);--warn:#F5B547;--warnbg:rgba(245,181,71,.12);--bad:#F0616D;--badbg:rgba(240,97,109,.12);--infobg:rgba(93,124,255,.14);
+  --disp:'Sora',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--tx);font-family:var(--body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--blue3)}
+.mono{font-family:var(--mono)}
+.mut{color:var(--mut)}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-left,0px))}
+.lbox{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 28px}
+.lbox h1{font-family:var(--disp);font-size:1.35rem;margin:22px 0 6px}
+.lbox p{color:var(--mut);margin-bottom:20px}
+.logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.logo img{height:30px;width:auto}
+.logo b{display:block;font-family:var(--disp);font-weight:800;font-size:1rem;color:#fff;letter-spacing:.015em;line-height:1}
+.logo small{display:block;font-family:var(--mono);font-size:.52rem;letter-spacing:.26em;text-transform:uppercase;color:var(--blue3);margin-top:4px}
+
+/* campos */
+label.f{display:flex;flex-direction:column;gap:5px;font-size:.78rem;color:var(--mut);font-family:var(--mono);letter-spacing:.02em}
+input.i,select.i,textarea.i{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:9px 11px;font-family:var(--body);font-size:.92rem;color:var(--tx);width:100%;min-width:0}
+textarea.i{min-height:76px;resize:vertical}
+input.i:focus,select.i:focus,textarea.i:focus{outline:2px solid var(--blue2);outline-offset:1px;border-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line2);background:var(--panel2);border-radius:9px;padding:9px 14px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--blue2)}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.pri:hover{background:#3B68FF}
+.btn.sm{padding:6px 10px;font-size:.82rem}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+.msg{margin-top:14px;font-size:.88rem}
+.msg.ok{color:var(--ok)}.msg.err{color:var(--bad)}
+
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:rgba(11,14,23,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1360px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top .wrap{display:flex;align-items:center;gap:18px;padding-block:12px;flex-wrap:wrap}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap}
+nav.tabs button{background:none;border:0;padding:8px 12px;border-radius:8px;color:var(--mut);cursor:pointer;font-weight:500}
+nav.tabs button.on{background:var(--panel2);color:var(--tx)}
+.periodo{display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap}
+.periodo input{width:142px}
+.quem{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--mut)}
+main{padding-block:22px 80px}
+h2.t{font-family:var(--disp);font-size:1.25rem;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--mut);margin-top:2px;margin-bottom:18px}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px}
+.kpi .l{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.kpi .v{font-family:var(--disp);font-size:1.45rem;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:.76rem;color:var(--mut);margin-top:2px}
+
+/* filtros */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.filtros .i{width:auto}
+.filtros .busca{flex:1 1 220px}
+.chk{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:.84rem;padding:8px 2px}
+
+/* tabela */
+.tbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{text-align:left;font-family:var(--mono);font-weight:500;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--panel2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.84rem}
+.nome{font-weight:600;color:var(--tx)}
+.emp{color:var(--mut);font-size:.8rem}
+.vazio{padding:36px;text-align:center;color:var(--mut)}
+
+/* pílulas */
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.74rem;font-weight:600;white-space:nowrap}
+.s-Novo{background:var(--infobg);color:var(--blue3)}
+.s-Emcontato{background:rgba(255,255,255,.08);color:var(--tx2)}
+.s-Qualificado{background:var(--warnbg);color:var(--warn)}
+.s-Proposta{background:rgba(157,178,255,.16);color:#C7D3FF}
+.s-Fechado{background:var(--okbg);color:var(--ok)}
+.s-Perdido{background:var(--badbg);color:var(--bad)}
+.f-Alta{background:var(--okbg);color:var(--ok)}
+.f-Média{background:var(--warnbg);color:var(--warn)}
+.f-Baixa{background:rgba(255,255,255,.07);color:var(--mut)}
+.teste{background:rgba(255,255,255,.06);color:var(--mut);font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;padding:2px 6px;border-radius:5px;margin-left:6px}
+.atrasado{color:var(--bad);font-weight:600}
+
+/* ficha */
+#vel{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
+#ficha{position:fixed;top:0;right:0;bottom:0;width:min(760px,100%);background:var(--panel);border-left:1px solid var(--line);z-index:41;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
+.fh{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line);padding:16px 20px;display:flex;align-items:flex-start;gap:12px;z-index:2}
+.fh h3{font-family:var(--disp);font-size:1.15rem}
+.fh .x{margin-left:auto}
+.fb{padding:18px 20px;display:flex;flex-direction:column;gap:18px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue3);margin-bottom:12px;font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.span2{grid-column:span 2}
+@media (max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.span2{grid-column:auto}.periodo{margin-left:0}}
+dl.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:.86rem}
+dl.kv dt{color:var(--mut);font-family:var(--mono);font-size:.74rem;padding-top:2px}
+dl.kv dd{word-break:break-word;min-width:0}
+@media (max-width:520px){dl.kv{grid-template-columns:1fr}dl.kv dd{margin-bottom:6px}}
+.linha{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+ol.tl{list-style:none;display:flex;flex-direction:column;gap:0;border-left:1px solid var(--line2);margin-left:6px}
+ol.tl li{position:relative;padding:0 0 12px 18px;font-size:.86rem}
+ol.tl li::before{content:"";position:absolute;left:-5px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--blue2)}
+ol.tl li.lead::before{background:var(--ok)}
+ol.tl li.meta::before{background:var(--warn)}
+ol.tl .q{font-family:var(--mono);font-size:.74rem;color:var(--mut)}
+.score{font-family:var(--disp);font-size:1.6rem;font-weight:700}
+.aviso{background:var(--warnbg);color:var(--warn);border-radius:9px;padding:10px 12px;font-size:.86rem}
+.ok-badge{color:var(--ok)}.bad-badge{color:var(--bad)}
+.barra{height:8px;border-radius:99px;background:var(--panel3);overflow:hidden;min-width:60px}
+.barra i{display:block;height:100%;background:var(--blue2)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--panel3);border:1px solid var(--line2);padding:10px 16px;border-radius:10px;z-index:60;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="login" hidden>
+  <div class="lbox">
+    <span class="logo"><img src="../logo-2x1.png" alt=""><span><b>DOISXUM</b><small>Growth Marketing</small></span></span>
+    <h1>CRM da 2X1</h1>
+    <p>Entre com o seu e-mail. Você recebe um link de acesso, sem senha.</p>
+    <form id="fLogin">
+      <label class="f">E-mail<input class="i" type="email" id="lEmail" required autocomplete="email"></label>
+      <button class="btn pri" style="width:100%;margin-top:14px" id="lBtn">Enviar link de acesso</button>
+    </form>
+    <div class="msg" id="lMsg"></div>
+  </div>
+</section>
+
+<section id="espera" hidden>
+  <div style="min-height:100vh;display:grid;place-items:center;padding:24px 16px">
+    <div class="lbox">
+      <h1>Acesso aguardando liberação</h1>
+      <p>O e-mail <b id="eEmail"></b> entrou, mas ainda não faz parte da equipe do CRM. Peça para o administrador liberar o acesso.</p>
+      <button class="btn" id="eSair">Sair</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap">
+      <span class="logo"><img src="../logo-2x1.png" alt=""><span><b>DOISXUM</b><small>CRM</small></span></span>
+      <nav class="tabs" id="tabs">
+        <button data-v="leads" class="on">Leads</button>
+        <button data-v="funil">Funil e atribuição</button>
+        <button data-v="midia">Mídia</button>
+        <button data-v="nota">Nota do lead</button>
+      </nav>
+      <div class="periodo">
+        <input class="i" type="date" id="pIni" aria-label="Início do período">
+        <span class="mut">até</span>
+        <input class="i" type="date" id="pFim" aria-label="Fim do período">
+      </div>
+      <div class="quem"><span id="uNome"></span><button class="btn sm ghost" id="sair">Sair</button></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- LEADS -->
+    <section data-view="leads">
+      <h2 class="t">Leads</h2>
+      <p class="sub">Todo lead da LP entra aqui sozinho, com a nota automática e a origem. Clique para abrir a ficha.</p>
+      <div class="kpis" id="kLeads"></div>
+      <div class="filtros">
+        <input class="i busca" id="fBusca" placeholder="Buscar por nome, e-mail, empresa ou WhatsApp">
+        <select class="i" id="fStatus"><option value="">Todos os status</option></select>
+        <select class="i" id="fFaixa"><option value="">Todas as notas</option><option>Alta</option><option>Média</option><option>Baixa</option></select>
+        <select class="i" id="fCamp"><option value="">Todas as campanhas</option></select>
+        <label class="chk"><input type="checkbox" id="fTeste"> mostrar testes</label>
+        <button class="btn sm" id="bCsv">Exportar CSV</button>
+      </div>
+      <div class="tbox"><table>
+        <thead><tr><th>Chegou</th><th>Lead</th><th>Nota</th><th>Status</th><th>Origem</th><th>Responsável</th><th>Próximo contato</th></tr></thead>
+        <tbody id="tLeads"></tbody>
+      </table></div>
+    </section>
+
+    <!-- FUNIL -->
+    <section data-view="funil" hidden>
+      <h2 class="t">Funil e atribuição</h2>
+      <p class="sub">Do visitante ao contrato, por campanha e por anúncio. Testes ficam de fora. O investimento vem da aba Mídia.</p>
+      <div class="kpis" id="kFunil"></div>
+      <div class="tbox"><table>
+        <thead><tr><th>Campanha</th><th>Anúncio</th><th class="num">Visitantes</th><th class="num">Iniciaram</th><th class="num">Leads</th><th class="num">Conv. LP</th><th class="num">Qualif.</th><th class="num">Fechados</th><th class="num">Receita</th><th class="num">Invest.</th><th class="num">CPL</th><th class="num">Custo qualif.</th><th class="num">CAC</th><th class="num">ROAS</th></tr></thead>
+        <tbody id="tFunil"></tbody>
+      </table></div>
+      <p class="sub" style="margin-top:12px">Conv. LP é leads dividido por visitantes únicos. Uma campanha só aparece com nome quando o anúncio tem as UTMs no link.</p>
+    </section>
+
+    <!-- MÍDIA -->
+    <section data-view="midia" hidden>
+      <h2 class="t">Mídia</h2>
+      <p class="sub">Lance o investimento por dia e por anúncio, com os mesmos nomes das UTMs. É isso que faz o funil calcular CPL, CAC e ROAS.</p>
+      <form class="card" id="fMidia" style="margin-bottom:16px">
+        <div class="grid3">
+          <label class="f">Data<input class="i" type="date" id="mData" required></label>
+          <label class="f">Campanha (utm_campaign)<input class="i" id="mCamp" required list="dlCamp"></label>
+          <label class="f">Anúncio (utm_content)<input class="i" id="mAnu" list="dlAnu"></label>
+          <label class="f">Conjunto (utm_medium)<input class="i" id="mConj"></label>
+          <label class="f">Investimento em R$<input class="i" type="number" step="0.01" min="0" id="mInv" required></label>
+          <label class="f">Impressões<input class="i" type="number" min="0" id="mImp"></label>
+          <label class="f">Cliques<input class="i" type="number" min="0" id="mCli"></label>
+          <label class="f">Leads na plataforma<input class="i" type="number" min="0" id="mLp"></label>
+          <div style="display:flex;align-items:flex-end"><button class="btn pri" style="width:100%">Lançar</button></div>
+        </div>
+        <datalist id="dlCamp"></datalist><datalist id="dlAnu"></datalist>
+      </form>
+      <div class="tbox"><table>
+        <thead><tr><th>Data</th><th>Campanha</th><th>Conjunto</th><th>Anúncio</th><th class="num">Investimento</th><th class="num">Impr.</th><th class="num">Cliques</th><th class="num">CTR</th><th></th></tr></thead>
+        <tbody id="tMidia"></tbody>
+      </table></div>
+    </section>
+
+    <!-- NOTA -->
+    <section data-view="nota" hidden>
+      <h2 class="t">Nota do lead</h2>
+      <p class="sub">A nota é calculada sozinha quando o lead chega, a partir das respostas do formulário. Mudou um peso aqui, todos os leads são recalculados. Os pesos atuais são premissas iniciais e devem ser ajustados com o que de fato fecha.</p>
+      <div class="grid2" style="align-items:start">
+        <div class="tbox"><table>
+          <thead><tr><th>Critério</th><th>Resposta</th><th class="num">Pontos</th></tr></thead>
+          <tbody id="tRegras"></tbody>
+        </table></div>
+        <div class="card">
+          <h4>Faixas</h4>
+          <div id="faixas" style="display:flex;flex-direction:column;gap:10px"></div>
+          <p class="mut" style="margin-top:12px;font-size:.84rem">Lead com nota na faixa Alta dispara o evento LeadPerfilAlto para a Meta na hora em que chega.</p>
+          <button class="btn pri" id="bNota" style="margin-top:14px">Salvar e recalcular</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ficha do lead -->
+<div id="vel" hidden></div>
+<aside id="ficha" hidden aria-label="Ficha do lead"></aside>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  var SB_URL = "https://mdywlvrhubldacdtqekh.supabase.co";
+  var SB_KEY = "sb_publishable_2Oaj8jn0daBA1QpfBkXmfg_a8Us1EY4";
+  var sb = window.supabase.createClient(SB_URL, SB_KEY);
+  var STATUS = ["Novo","Em contato","Qualificado","Proposta","Fechado","Perdido"];
+  var MOTIVOS = ["Sem verba","Fora do perfil","Sem resposta","Escolheu concorrente","Momento errado","Outro"];
+  var st = {user:null, membro:null, equipe:[], leads:[], view:"leads"};
+
+  /* ---------- utilidades ---------- */
+  function $(id){ return document.getElementById(id); }
+  function esc(v){ return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function brl(v, dec){ if(v == null || isNaN(v)) return "·"; return "R$ " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0}); }
+  function n(v){ return Number(v||0).toLocaleString("pt-BR"); }
+  function pct(v){ return v == null ? "·" : Number(v).toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%"; }
+  function dt(iso){ if(!iso) return ""; var d = new Date(iso); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}) + " " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
+  function dia(s){ if(!s) return ""; var p = s.split("-"); return p[2]+"/"+p[1]+"/"+p[0]; }
+  function hojeISO(){ var d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+  function toast(t){ var e = document.createElement("div"); e.className="toast"; e.textContent=t; document.body.appendChild(e); setTimeout(function(){ e.remove(); }, 2600); }
+  function inicioPeriodo(){ return new Date($("pIni").value + "T00:00:00").toISOString(); }
+  function fimPeriodo(){ var d = new Date($("pFim").value + "T00:00:00"); d.setDate(d.getDate()+1); return d.toISOString(); }
+  function wa(t){ var d = String(t||"").replace(/\D/g,""); if(!d) return ""; if(d.indexOf("55")!==0 || d.length<=11) d = "55"+d; return "https://wa.me/"+d; }
+  function origem(l){ var c = l.utm_campaign || "", a = l.utm_content || "", s = l.utm_source || "";
+    if(!c && !a && !s) return '<span class="mut">direto</span>';
+    return esc(c || "(sem campanha)") + '<div class="emp">' + esc([s, a].filter(Boolean).join(" · ")) + '</div>'; }
+
+  /* ---------- autenticação ---------- */
+  function mostra(qual){ ["login","espera","app"].forEach(function(id){ $(id).hidden = id !== qual; }); }
+
+  $("fLogin").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var email = $("lEmail").value.trim().toLowerCase();
+    $("lBtn").disabled = true; $("lMsg").className = "msg"; $("lMsg").textContent = "Enviando...";
+    sb.auth.signInWithOtp({email: email, options: {emailRedirectTo: location.origin + location.pathname}}).then(function(r){
+      $("lBtn").disabled = false;
+      if(r.error){ $("lMsg").className = "msg err"; $("lMsg").textContent = "Não foi possível enviar. " + r.error.message; return; }
+      $("lMsg").className = "msg ok"; $("lMsg").textContent = "Link enviado. Abra o e-mail neste mesmo navegador e clique no link.";
+    });
+  });
+  function sair(){ sb.auth.signOut().then(function(){ location.reload(); }); }
+  $("sair").addEventListener("click", sair); $("eSair").addEventListener("click", sair);
+
+  async function iniciar(session){
+    if(!session){ mostra("login"); return; }
+    st.user = session.user;
+    var r = await sb.from("equipe").select("user_id,nome,email,papel");
+    st.equipe = r.data || [];
+    st.membro = st.equipe.find(function(m){ return m.user_id === st.user.id; });
+    if(!st.membro){ $("eEmail").textContent = st.user.email; mostra("espera"); return; }
+    $("uNome").textContent = st.membro.nome;
+    mostra("app");
+    if(!$("pIni").value){ var h = hojeISO(); $("pIni").value = h.slice(0,8) + "01"; $("pFim").value = h; }
+    carregar();
+  }
+  sb.auth.getSession().then(function(r){ iniciar(r.data.session); });
+  sb.auth.onAuthStateChange(function(ev, session){ if(ev === "SIGNED_IN" && !st.user) iniciar(session); if(ev === "SIGNED_OUT") mostra("login"); });
+
+  /* ---------- navegação ---------- */
+  $("tabs").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-v]"); if(!b) return;
+    st.view = b.getAttribute("data-v");
+    document.querySelectorAll("#tabs button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    document.querySelectorAll("[data-view]").forEach(function(s){ s.hidden = s.getAttribute("data-view") !== st.view; });
+    carregar();
+  });
+  ["pIni","pFim"].forEach(function(id){ $(id).addEventListener("change", carregar); });
+  function carregar(){
+    if(st.view === "leads") carregaLeads();
+    if(st.view === "funil") carregaFunil();
+    if(st.view === "midia") carregaMidia();
+    if(st.view === "nota") carregaNota();
+  }
+
+  /* ---------- LEADS ---------- */
+  STATUS.forEach(function(s){ var o = document.createElement("option"); o.textContent = s; $("fStatus").appendChild(o); });
+  ["fBusca","fStatus","fFaixa","fCamp","fTeste"].forEach(function(id){ $(id).addEventListener(id==="fBusca"?"input":"change", function(){ if(id==="fTeste") carregaLeads(); else desenhaLeads(); }); });
+
+  async function carregaLeads(){
+    $("tLeads").innerHTML = '<tr><td colspan="7" class="vazio">Carregando...</td></tr>';
+    var q = sb.from("leads").select("*").gte("criado_em", inicioPeriodo()).lt("criado_em", fimPeriodo()).order("criado_em",{ascending:false}).limit(1000);
+    if(!$("fTeste").checked) q = q.eq("teste", false);
+    var r = await q;
+    if(r.error){ $("tLeads").innerHTML = '<tr><td colspan="7" class="vazio">Erro ao carregar. ' + esc(r.error.message) + '</td></tr>'; return; }
+    st.leads = r.data || [];
+    var camps = {}; st.leads.forEach(function(l){ camps[l.utm_campaign || "(sem campanha)"] = 1; });
+    var atual = $("fCamp").value;
+    $("fCamp").innerHTML = '<option value="">Todas as campanhas</option>' + Object.keys(camps).sort().map(function(c){ return '<option'+(c===atual?' selected':'')+'>'+esc(c)+'</option>'; }).join("");
+    desenhaLeads();
+  }
+  function filtrados(){
+    var b = $("fBusca").value.trim().toLowerCase(), s = $("fStatus").value, f = $("fFaixa").value, c = $("fCamp").value;
+    return st.leads.filter(function(l){
+      if(s && l.status !== s) return false;
+      if(f && l.score_faixa !== f) return false;
+      if(c && (l.utm_campaign || "(sem campanha)") !== c) return false;
+      if(b && [l.nome,l.email,l.empresa,l.whatsapp].join(" ").toLowerCase().indexOf(b) < 0) return false;
+      return true;
+    });
+  }
+  function desenhaLeads(){
+    var L = filtrados(), hoje = hojeISO();
+    var tot = L.length, alta = L.filter(function(l){ return l.score_faixa === "Alta"; }).length;
+    var qual = L.filter(function(l){ return ["Qualificado","Proposta","Fechado"].indexOf(l.status) >= 0; }).length;
+    var fech = L.filter(function(l){ return l.status === "Fechado"; });
+    var rec = fech.reduce(function(a,l){ return a + Number(l.valor_contrato||0); }, 0);
+    var novos = L.filter(function(l){ return l.status === "Novo"; }).length;
+    var atras = L.filter(function(l){ return l.proximo_contato && l.proximo_contato < hoje && ["Fechado","Perdido"].indexOf(l.status) < 0; }).length;
+    $("kLeads").innerHTML = [
+      ["Leads", n(tot), "no período"],
+      ["Nota alta", n(alta), tot ? pct(alta/tot*100) + " dos leads" : "·"],
+      ["Sem contato", n(novos), "ainda com status Novo"],
+      ["Qualificados", n(qual), tot ? pct(qual/tot*100) + " dos leads" : "·"],
+      ["Fechados", n(fech.length), brl(rec)],
+      ["Contato atrasado", n(atras), "próximo contato vencido"]
+    ].map(function(k){ return '<div class="kpi"><div class="l">'+k[0]+'</div><div class="v">'+k[1]+'</div><div class="d">'+k[2]+'</div></div>'; }).join("");
+    if(!L.length){ $("tLeads").innerHTML = '<tr><td colspan="7" class="vazio">Nenhum lead com esses filtros no período.</td></tr>'; return; }
+    $("tLeads").innerHTML = L.map(function(l){
+      var pc = l.proximo_contato ? '<span class="'+(l.proximo_contato < hoje && ["Fechado","Perdido"].indexOf(l.status)<0 ? "atrasado" : "")+'">'+dia(l.proximo_contato)+'</span>' : '<span class="mut">·</span>';
+      return '<tr class="click" data-id="'+esc(l.id)+'">' +
+        '<td class="mono" style="white-space:nowrap">'+dt(l.criado_em)+'</td>' +
+        '<td><div class="nome">'+esc(l.nome)+(l.teste?'<span class="teste">TESTE</span>':'')+'</div><div class="emp">'+esc(l.empresa||"")+(l.segmento?' · '+esc(l.segmento):'')+'</div></td>' +
+        '<td>'+(l.score_faixa ? '<span class="pill f-'+esc(l.score_faixa)+'">'+esc(l.score_faixa)+' · '+esc(l.score)+'</span>' : '')+'</td>' +
+        '<td><span class="pill s-'+esc(String(l.status).replace(/\s/g,''))+'">'+esc(l.status)+'</span></td>' +
+        '<td>'+origem(l)+'</td>' +
+        '<td>'+esc(l.responsavel||"")+'</td>' +
+        '<td>'+pc+'</td></tr>';
+    }).join("");
+  }
+  $("tLeads").addEventListener("click", function(e){ var tr = e.target.closest("tr[data-id]"); if(tr) abreFicha(tr.getAttribute("data-id")); });
+
+  $("bCsv").addEventListener("click", function(){
+    var L = filtrados(); if(!L.length){ toast("Nada para exportar"); return; }
+    var cols = ["criado_em","nome","whatsapp","email","empresa","segmento","faturamento","investimento","desafio","score","score_faixa","status","qualificacao","responsavel","proximo_passo","proximo_contato","motivo_perda","valor_contrato","data_fechamento","utm_source","utm_medium","utm_campaign","utm_content","utm_term","campaign_id","adset_id","ad_id","placement","event_id"];
+    var linhas = [cols.join(";")].concat(L.map(function(l){ return cols.map(function(c){ var v = l[c] == null ? "" : String(l[c]); if(/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g,'""') + '"'; }).join(";"); }));
+    var blob = new Blob(["﻿" + linhas.join("\n")], {type:"text/csv;charset=utf-8"});
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "leads-2x1-" + hojeISO() + ".csv"; a.click();
+  });
+
+  /* ---------- FICHA ---------- */
+  function fechaFicha(){ $("ficha").hidden = true; $("vel").hidden = true; }
+  $("vel").addEventListener("click", fechaFicha);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") fechaFicha(); });
+
+  function opt(lista, atual, vazio){ return (vazio ? '<option value=""></option>' : '') + lista.map(function(v){ return '<option'+(v===atual?' selected':'')+'>'+esc(v)+'</option>'; }).join(""); }
+
+  async function abreFicha(id){
+    var l = st.leads.find(function(x){ return x.id === id; });
+    if(!l){ var r0 = await sb.from("leads").select("*").eq("id", id).single(); l = r0.data; }
+    if(!l) return;
+    $("vel").hidden = false; $("ficha").hidden = false;
+    $("ficha").innerHTML = '<div class="fh"><div><h3>'+esc(l.nome)+'</h3><div class="mut">Carregando ficha...</div></div><button class="btn sm x" id="fx">Fechar</button></div>';
+    $("fx").onclick = fechaFicha;
+    var rs = await Promise.all([
+      l.visitor_id ? sb.from("eventos_site").select("criado_em,evento,utm_source,utm_campaign,utm_content,placement,page_url,dados").eq("visitor_id", l.visitor_id).order("criado_em").limit(300) : Promise.resolve({data:[]}),
+      sb.from("eventos_meta").select("event_name,enviado_em,sucesso,http_status,test_event_code,resposta").eq("lead_id", l.id).order("enviado_em"),
+      sb.from("historico_status").select("de,para,por_nome,em").eq("lead_id", l.id).order("em")
+    ]);
+    desenhaFicha(l, rs[0].data || [], rs[1].data || [], rs[2].data || []);
+  }
+
+  function desenhaFicha(l, jornada, meta, hist){
+    var nomes = st.equipe.map(function(m){ return m.nome; });
+    var w = wa(l.whatsapp);
+    var temClique = !!(l.fbclid || l.fbc);
+    var h = '';
+    h += '<div class="fh"><div><h3>'+esc(l.nome)+(l.teste?'<span class="teste">TESTE</span>':'')+'</h3><div class="mut">'+esc(l.empresa||"")+(l.segmento?' · '+esc(l.segmento):'')+' · chegou em '+dt(l.criado_em)+'</div></div><button class="btn sm x" id="fx">Fechar</button></div>';
+    h += '<div class="fb">';
+
+    // contato + nota
+    h += '<div class="card"><div class="linha" style="justify-content:space-between">' +
+      '<div><div class="mut mono" style="font-size:.72rem;letter-spacing:.12em">NOTA AUTOMÁTICA</div><div class="score">'+esc(l.score)+' <span class="pill f-'+esc(l.score_faixa)+'" style="vertical-align:middle">'+esc(l.score_faixa||"")+'</span></div></div>' +
+      '<div class="linha">' + (w ? '<a class="btn pri" href="'+w+'" target="_blank" rel="noopener">Abrir WhatsApp</a>' : '') +
+      (l.email ? '<span class="mono" style="font-size:.84rem;user-select:all">'+esc(l.email)+'</span>' : '') + '</div></div>' +
+      '<dl class="kv" style="margin-top:14px"><dt>WhatsApp</dt><dd>'+esc(l.whatsapp||"")+'</dd><dt>Faturamento</dt><dd>'+esc(l.faturamento||"")+'</dd><dt>Investe em tráfego</dt><dd>'+esc(l.investimento||"")+'</dd><dt>Desafio</dt><dd>'+esc(l.desafio||"")+'</dd></dl></div>';
+
+    // qualificação
+    h += '<form class="card" id="fQual"><h4>Qualificação e próximos passos</h4><div class="grid2">' +
+      '<label class="f">Status<select class="i" name="status">'+opt(STATUS, l.status)+'</select></label>' +
+      '<label class="f">Qualificação manual<select class="i" name="qualificacao">'+opt(["Alta","Média","Baixa"], l.qualificacao, true)+'</select></label>' +
+      '<label class="f">Responsável<select class="i" name="responsavel">'+opt(nomes.concat(l.responsavel && nomes.indexOf(l.responsavel)<0 ? [l.responsavel] : []), l.responsavel, true)+'</select></label>' +
+      '<label class="f">Próximo contato<input class="i" type="date" name="proximo_contato" value="'+esc(l.proximo_contato||"")+'"></label>' +
+      '<label class="f span2">Próximo passo<input class="i" name="proximo_passo" value="'+esc(l.proximo_passo||"")+'"></label>' +
+      '<label class="f">Valor do contrato em R$<input class="i" type="number" step="0.01" min="0" name="valor_contrato" value="'+esc(l.valor_contrato||"")+'"></label>' +
+      '<label class="f">Data de fechamento<input class="i" type="date" name="data_fechamento" value="'+esc(l.data_fechamento||"")+'"></label>' +
+      '<label class="f">Motivo da perda<select class="i" name="motivo_perda">'+opt(MOTIVOS, l.motivo_perda, true)+'</select></label>' +
+      '<label class="f">Último contato<input class="i" readonly value="'+(l.ultimo_contato?esc(dt(l.ultimo_contato)):"")+'"></label>' +
+      '<label class="f span2">Observações<textarea class="i" name="observacoes">'+esc(l.observacoes||"")+'</textarea></label>' +
+      '</div><div id="qAviso" class="aviso" style="margin-top:12px" hidden></div>' +
+      '<div class="linha" style="margin-top:14px"><button class="btn pri">Salvar</button><button type="button" class="btn" id="bContato">Registrar contato agora</button>' +
+      '<label class="chk" style="margin-left:auto"><input type="checkbox" name="teste" '+(l.teste?'checked':'')+'> é teste</label>' +
+      (l.teste ? '<button type="button" class="btn sm" id="bApaga" style="color:var(--bad)">Apagar lead de teste</button>' : '') +
+      '</div><p class="mut" style="font-size:.8rem;margin-top:10px">Ao salvar como Qualificado, Proposta ou Fechado, o evento correspondente vai sozinho para a Meta pela API de Conversões.</p></form>';
+
+    // rastreamento
+    h += '<div class="card"><h4>Rastreamento deste lead</h4><dl class="kv">' +
+      '<dt>Origem</dt><dd>'+esc(l.utm_source||"direto")+'</dd>' +
+      '<dt>Conjunto</dt><dd>'+esc(l.utm_medium||"·")+'</dd>' +
+      '<dt>Campanha</dt><dd>'+esc(l.utm_campaign||"·")+(l.campaign_id?' <span class="mut mono">#'+esc(l.campaign_id)+'</span>':'')+'</dd>' +
+      '<dt>Anúncio</dt><dd>'+esc(l.utm_content||"·")+(l.ad_id?' <span class="mut mono">#'+esc(l.ad_id)+'</span>':'')+'</dd>' +
+      '<dt>Posicionamento</dt><dd>'+esc(l.placement||"·")+'</dd>' +
+      '<dt>Primeiro toque</dt><dd>'+(l.ft_em ? dt(l.ft_em)+' · '+esc(l.ft_utm_campaign||"direto")+(l.ft_utm_content?' · '+esc(l.ft_utm_content):'') : '<span class="mut">sem registro de visita anterior</span>')+'</dd>' +
+      '<dt>Clique de anúncio</dt><dd>'+(temClique ? '<span class="ok-badge">sim, com identificador da Meta (fbclid ou fbc)</span>' : '<span class="mut">não, sem fbclid</span>')+'</dd>' +
+      '<dt>Cookie da Meta</dt><dd>'+(l.fbp ? '<span class="ok-badge">fbp presente</span>' : '<span class="mut">sem fbp</span>')+'</dd>' +
+      '<dt>IP e navegador</dt><dd>'+(l.client_ip ? '<span class="ok-badge">guardados para a API de Conversões</span>' : '<span class="mut">não disponíveis</span>')+'</dd>' +
+      '<dt>event_id</dt><dd class="mono" style="font-size:.8rem">'+esc(l.event_id)+'</dd>' +
+      '</dl></div>';
+
+    // jornada
+    var NOMES = {page_view:"Visitou a LP",scroll_50:"Rolou metade da página",click_cta:"Clicou em um botão",form_start:"Começou o formulário",form_step2:"Foi para o passo 2",lead:"Enviou o formulário"};
+    h += '<div class="card"><h4>Jornada até virar lead</h4>';
+    if(!jornada.length){ h += '<p class="mut">Sem eventos de navegação. Leads anteriores ao banco ou que chegaram sem o registro de visita aparecem assim.</p>'; }
+    else {
+      h += '<ol class="tl">' + jornada.map(function(e){
+        var extra = e.evento === "page_view" ? ' · '+esc(e.utm_campaign||"direto")+(e.utm_content?' · '+esc(e.utm_content):'') : (e.evento === "click_cta" && e.dados && e.dados.local ? ' · '+esc(e.dados.local) : '');
+        return '<li class="'+(e.evento==="lead"?"lead":"")+'"><div>'+esc(NOMES[e.evento]||e.evento)+'<span class="mut">'+extra+'</span></div><div class="q">'+dt(e.criado_em)+'</div></li>';
+      }).join("") + '</ol>';
+    }
+    h += '</div>';
+
+    // meta + histórico
+    h += '<div class="grid2" style="align-items:start"><div class="card"><h4>Eventos enviados à Meta</h4>';
+    if(!meta.length){ h += '<p class="mut">Nenhum evento enviado pelo servidor ainda.'+(l.teste?' Leads de teste só vão com código de teste.':'')+'</p>'; }
+    else { h += '<ol class="tl">' + meta.map(function(m){ return '<li class="meta"><div>'+esc(m.event_name)+' '+(m.sucesso?'<span class="ok-badge">aceito</span>':'<span class="bad-badge">falhou ('+esc(m.http_status)+')</span>')+(m.test_event_code?' <span class="teste">TESTE</span>':'')+'</div><div class="q">'+dt(m.enviado_em)+'</div></li>'; }).join("") + '</ol>'; }
+    h += '</div><div class="card"><h4>Histórico de status</h4><ol class="tl">' + hist.map(function(x){ return '<li><div>'+(x.de ? esc(x.de)+' → ' : '')+'<b>'+esc(x.para)+'</b></div><div class="q">'+dt(x.em)+(x.por_nome?' · '+esc(x.por_nome):'')+'</div></li>'; }).join("") + '</ol></div></div>';
+
+    h += '</div>';
+    $("ficha").innerHTML = h;
+    $("fx").onclick = fechaFicha;
+
+    var form = $("fQual");
+    form.addEventListener("submit", async function(ev){
+      ev.preventDefault();
+      var fd = new FormData(form), up = {};
+      ["status","qualificacao","responsavel","proximo_contato","proximo_passo","valor_contrato","data_fechamento","motivo_perda","observacoes"].forEach(function(k){ var v = fd.get(k); up[k] = (v === "" || v == null) ? null : v; });
+      up.teste = fd.get("teste") === "on";
+      if(up.valor_contrato != null) up.valor_contrato = Number(up.valor_contrato);
+      var av = $("qAviso"); av.hidden = true;
+      if(up.status === "Fechado" && !(up.valor_contrato > 0)){ av.textContent = "Para marcar como Fechado, preencha o valor do contrato. É esse valor que vai para a Meta como compra."; av.hidden = false; return; }
+      if(up.status === "Perdido" && !up.motivo_perda){ av.textContent = "Escolha o motivo da perda. É ele que mostra onde o funil está vazando."; av.hidden = false; return; }
+      if(up.status !== l.status && l.status === "Novo" && !l.ultimo_contato) up.ultimo_contato = new Date().toISOString();
+      var r = await sb.from("leads").update(up).eq("id", l.id).select("*").single();
+      if(r.error){ av.textContent = "Não salvou. " + r.error.message; av.hidden = false; return; }
+      var i = st.leads.findIndex(function(x){ return x.id === l.id; }); if(i >= 0) st.leads[i] = r.data;
+      toast(up.status !== l.status ? "Salvo. Status agora é " + up.status + "." : "Salvo.");
+      desenhaLeads();
+      setTimeout(function(){ abreFicha(l.id); }, up.status !== l.status ? 2500 : 0);
+    });
+    $("bContato").onclick = async function(){
+      var r = await sb.from("leads").update({ultimo_contato: new Date().toISOString()}).eq("id", l.id).select("*").single();
+      if(!r.error){ var i = st.leads.findIndex(function(x){ return x.id === l.id; }); if(i >= 0) st.leads[i] = r.data; toast("Contato registrado."); abreFicha(l.id); }
+    };
+    if($("bApaga")) $("bApaga").onclick = async function(){
+      var b = $("bApaga");
+      if(b.dataset.conf !== "1"){ b.dataset.conf = "1"; b.textContent = "Clique de novo para confirmar"; return; }
+      var r = await sb.from("leads").delete().eq("id", l.id).eq("teste", true);
+      if(r.error){ toast("Não apagou. " + r.error.message); return; }
+      st.leads = st.leads.filter(function(x){ return x.id !== l.id; }); fechaFicha(); desenhaLeads(); toast("Lead de teste apagado.");
+    };
+  }
+
+  /* ---------- FUNIL ---------- */
+  async function carregaFunil(){
+    $("tFunil").innerHTML = '<tr><td colspan="14" class="vazio">Carregando...</td></tr>';
+    var r = await sb.rpc("funil_periodo", {p_inicio: $("pIni").value, p_fim: $("pFim").value, p_incluir_teste: false});
+    if(r.error){ $("tFunil").innerHTML = '<tr><td colspan="14" class="vazio">Erro. '+esc(r.error.message)+'</td></tr>'; return; }
+    var R = r.data || [];
+    var s = R.reduce(function(a,x){ ["visitantes","iniciaram_form","passo2","leads","qualificados","propostas","fechados","receita","investimento"].forEach(function(k){ a[k] = (a[k]||0) + Number(x[k]||0); }); return a; }, {});
+    function div(a,b){ return b ? a/b : null; }
+    $("kFunil").innerHTML = [
+      ["Visitantes", n(s.visitantes), "únicos na LP"],
+      ["Leads", n(s.leads), "conversão " + pct(div(s.leads,s.visitantes) == null ? null : div(s.leads,s.visitantes)*100)],
+      ["Qualificados", n(s.qualificados), pct(div(s.qualificados,s.leads) == null ? null : div(s.qualificados,s.leads)*100) + " dos leads"],
+      ["Fechados", n(s.fechados), brl(s.receita)],
+      ["Investimento", brl(s.investimento), "lançado na aba Mídia"],
+      ["CPL", brl(div(s.investimento,s.leads),2), "custo por lead"],
+      ["Custo por qualificado", brl(div(s.investimento,s.qualificados),2), "o número que mais importa"],
+      ["CAC", brl(div(s.investimento,s.fechados)), "ROAS " + (div(s.receita,s.investimento) == null ? "·" : div(s.receita,s.investimento).toLocaleString("pt-BR",{maximumFractionDigits:2}) + "x")]
+    ].map(function(k){ return '<div class="kpi"><div class="l">'+k[0]+'</div><div class="v">'+k[1]+'</div><div class="d">'+k[2]+'</div></div>'; }).join("");
+    if(!R.length){ $("tFunil").innerHTML = '<tr><td colspan="14" class="vazio">Sem dados no período.</td></tr>'; return; }
+    $("tFunil").innerHTML = R.map(function(x){
+      return '<tr><td>'+esc(x.campanha)+'</td><td>'+esc(x.anuncio)+'</td><td class="num">'+n(x.visitantes)+'</td><td class="num">'+n(x.iniciaram_form)+'</td><td class="num">'+n(x.leads)+'</td><td class="num">'+pct(x.taxa_lp)+'</td><td class="num">'+n(x.qualificados)+'</td><td class="num">'+n(x.fechados)+'</td><td class="num">'+brl(x.receita)+'</td><td class="num">'+brl(x.investimento)+'</td><td class="num">'+brl(x.cpl,2)+'</td><td class="num">'+brl(x.custo_qualificado,2)+'</td><td class="num">'+brl(x.cac)+'</td><td class="num">'+(x.roas==null?"·":Number(x.roas).toLocaleString("pt-BR",{maximumFractionDigits:2})+"x")+'</td></tr>';
+    }).join("");
+  }
+
+  /* ---------- MÍDIA ---------- */
+  async function carregaMidia(){
+    if(!$("mData").value) $("mData").value = hojeISO();
+    $("tMidia").innerHTML = '<tr><td colspan="9" class="vazio">Carregando...</td></tr>';
+    var r = await sb.from("midia_diaria").select("*").gte("data", $("pIni").value).lte("data", $("pFim").value).order("data",{ascending:false}).order("campanha");
+    var L = r.data || [];
+    var r2 = await sb.from("leads").select("utm_campaign,utm_content").not("utm_campaign","is",null).limit(1000);
+    var cs = {}, as = {}; (r2.data||[]).forEach(function(x){ if(x.utm_campaign) cs[x.utm_campaign]=1; if(x.utm_content) as[x.utm_content]=1; });
+    $("dlCamp").innerHTML = Object.keys(cs).map(function(c){ return '<option value="'+esc(c)+'">'; }).join("");
+    $("dlAnu").innerHTML = Object.keys(as).map(function(c){ return '<option value="'+esc(c)+'">'; }).join("");
+    if(!L.length){ $("tMidia").innerHTML = '<tr><td colspan="9" class="vazio">Nenhum investimento lançado no período.</td></tr>'; return; }
+    $("tMidia").innerHTML = L.map(function(m){
+      var ctr = m.impressoes ? (Number(m.cliques||0)/m.impressoes*100) : null;
+      return '<tr><td class="mono">'+dia(m.data)+'</td><td>'+esc(m.campanha)+'</td><td>'+esc(m.conjunto||"")+'</td><td>'+esc(m.anuncio||"")+'</td><td class="num">'+brl(m.investimento,2)+'</td><td class="num">'+(m.impressoes==null?"·":n(m.impressoes))+'</td><td class="num">'+(m.cliques==null?"·":n(m.cliques))+'</td><td class="num">'+pct(ctr)+'</td><td><button class="btn sm ghost" data-del="'+m.id+'">Remover</button></td></tr>';
+    }).join("");
+  }
+  $("fMidia").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    function num(id){ var v = $(id).value; return v === "" ? null : Number(v); }
+    var row = {data: $("mData").value, campanha: $("mCamp").value.trim(), anuncio: $("mAnu").value.trim() || null, conjunto: $("mConj").value.trim() || null,
+               investimento: num("mInv"), impressoes: num("mImp"), cliques: num("mCli"), leads_plataforma: num("mLp")};
+    var r = await sb.from("midia_diaria").insert(row);
+    if(r.error){ toast(/duplicate|unique/i.test(r.error.message) ? "Já existe lançamento para esse dia, campanha e anúncio." : "Não salvou. " + r.error.message); return; }
+    ["mInv","mImp","mCli","mLp"].forEach(function(id){ $(id).value = ""; });
+    toast("Investimento lançado."); carregaMidia();
+  });
+  $("tMidia").addEventListener("click", async function(e){
+    var b = e.target.closest("[data-del]"); if(!b) return;
+    if(b.dataset.conf !== "1"){ b.dataset.conf = "1"; b.textContent = "Confirmar"; return; }
+    var r = await sb.from("midia_diaria").delete().eq("id", Number(b.getAttribute("data-del")));
+    if(!r.error){ toast("Removido."); carregaMidia(); }
+  });
+
+  /* ---------- NOTA ---------- */
+  var CRIT = {faturamento:"Faturamento", investimento:"Investe em tráfego", segmento:"Segmento", desafio_detalhado:"Desafio bem descrito"};
+  async function carregaNota(){
+    var r = await Promise.all([sb.from("score_regras").select("*").order("campo").order("pontos"), sb.from("score_faixas").select("*").order("minimo",{ascending:false})]);
+    $("tRegras").innerHTML = (r[0].data||[]).map(function(x){
+      var rot = x.valor === "*" ? "qualquer outro" : (x.campo === "desafio_detalhado" ? "40 caracteres ou mais" : x.valor);
+      return '<tr><td class="mut">'+esc(CRIT[x.campo]||x.campo)+'</td><td>'+esc(rot)+'</td><td class="num"><input class="i" type="number" style="width:80px;text-align:right" data-regra="'+x.id+'" value="'+esc(x.pontos)+'"></td></tr>';
+    }).join("");
+    $("faixas").innerHTML = (r[1].data||[]).map(function(f){
+      return '<label class="f">'+esc(f.faixa)+' a partir de<input class="i" type="number" data-faixa="'+esc(f.faixa)+'" value="'+esc(f.minimo)+'"'+(f.faixa==="Baixa"?' readonly':'')+'></label>';
+    }).join("");
+  }
+  $("bNota").addEventListener("click", async function(){
+    var b = $("bNota"); b.disabled = true;
+    var ups = [];
+    document.querySelectorAll("[data-regra]").forEach(function(i){ ups.push(sb.from("score_regras").update({pontos: Number(i.value||0)}).eq("id", Number(i.getAttribute("data-regra")))); });
+    document.querySelectorAll("[data-faixa]").forEach(function(i){ if(i.getAttribute("data-faixa") !== "Baixa") ups.push(sb.from("score_faixas").update({minimo: Number(i.value||0)}).eq("faixa", i.getAttribute("data-faixa"))); });
+    var rs = await Promise.all(ups); b.disabled = false;
+    var erro = rs.find(function(r){ return r.error; });
+    toast(erro ? "Erro ao salvar. " + erro.error.message : "Pesos salvos e leads recalculados.");
+  });
+})();
+</script>
+</body>
+</html>
